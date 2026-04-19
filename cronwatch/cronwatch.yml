@@ -1,0 +1,35 @@
+# cronwatch configuration
+
+check_interval: 60  # seconds between checks
+state_file: .cronwatch_state.json
+
+jobs:
+  - name: daily-backup
+    schedule: "0 2 * * *"  # every day at 2am
+    timeout: 7200
+    grace_period: 600
+    tags:
+      - backup
+      - critical
+
+  - name: hourly-cleanup
+    schedule: "0 * * * *"  # every hour
+    timeout: 1800
+    grace_period: 120
+    tags:
+      - maintenance
+
+  - name: weekly-report
+    schedule: "0 9 * * 1"  # every Monday at 9am
+    timeout: 3600
+    grace_period: 900
+    tags:
+      - reporting
+
+alerts:
+  webhook_url: "https://hooks.example.com/services/your/webhook/url"
+  email: "ops@example.com"
+  smtp_host: "smtp.example.com"
+  smtp_port: 587
+  smtp_user: "alerts@example.com"
+  smtp_password: "changeme"
