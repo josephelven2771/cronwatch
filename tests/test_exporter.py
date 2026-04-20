@@ -89,3 +89,15 @@ def test_exporter_write(tmp_path, digest):
     content = out_file.read_text()
     assert content.endswith("\n")
     assert "backup" in content
+
+
+def test_exporter_write_json(tmp_path, digest):
+    """Ensure JSON output written to disk is valid and contains expected fields."""
+    out_file = tmp_path / "report.json"
+    exp = Exporter(fmt="json")
+    exp.write(digest, str(out_file))
+    content = out_file.read_text()
+    data = json.loads(content)
+    assert data["healthy_count"] == 1
+    assert data["problem_count"] == 1
+    assert len(data["entries"]) == 2
