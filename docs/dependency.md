@@ -63,3 +63,16 @@ else:
 `DependencyChecker.execution_order()` returns jobs sorted so that every
 prerequisite appears before the jobs that depend on it.  Returns `None`
 if a cycle is detected.
+
+### dependents_of
+
+`DependencyChecker.dependents_of(job_name)` returns the set of jobs that
+directly or transitively depend on the given job.  This is useful for
+determining the downstream impact when a job fails.
+
+```python
+checker = DependencyChecker(config)
+affected = checker.dependents_of("extract")
+print("jobs affected by extract failure:", affected)
+# jobs affected by extract failure: {'transform', 'load'}
+```
