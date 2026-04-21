@@ -45,6 +45,22 @@ def test_failure_rate(baseline: Baseline) -> None:
     assert stats.failure_rate == pytest.approx(0.5)
 
 
+def test_failure_rate_all_successful(baseline: Baseline) -> None:
+    """Failure rate should be 0.0 when all records succeeded."""
+    baseline.record("sync", duration=5.0, succeeded=True)
+    baseline.record("sync", duration=7.0, succeeded=True)
+    stats = baseline.stats_for("sync")
+    assert stats.failure_rate == pytest.approx(0.0)
+
+
+def test_failure_rate_all_failed(baseline: Baseline) -> None:
+    """Failure rate should be 1.0 when all records failed."""
+    baseline.record("sync", duration=5.0, succeeded=False)
+    baseline.record("sync", duration=7.0, succeeded=False)
+    stats = baseline.stats_for("sync")
+    assert stats.failure_rate == pytest.approx(1.0)
+
+
 def test_baseline_persists_to_disk(tmp_path: Path) -> None:
     path = tmp_path / "baseline.json"
     b1 = Baseline(path)
