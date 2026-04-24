@@ -81,3 +81,11 @@ def test_separate_keys_are_independent(limiter):
 def test_reset_at_is_future(limiter):
     result = limiter.check("job_e")
     assert result.reset_at > datetime.utcnow()
+
+
+def test_remaining_never_goes_below_zero(limiter):
+    """Remaining count should not go negative when records exceed max_alerts."""
+    for _ in range(5):
+        limiter.record("job_f")
+    result = limiter.check("job_f")
+    assert result.remaining == 0
