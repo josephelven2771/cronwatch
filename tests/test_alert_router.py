@@ -79,3 +79,14 @@ def test_build_router_parses_rule_dicts():
     assert len(router.rules) == 1
     assert router.rules[0].channel == "email"
     assert router.rules[0].min_failures == 2
+
+
+def test_route_first_matching_rule_wins():
+    """When an entry matches multiple rules, the first rule in order takes precedence."""
+    rules = [
+        RouteRule(tags=["critical"], min_failures=1, channel="both", label="crit"),
+        RouteRule(tags=["critical"], min_failures=1, channel="email", label="crit-email"),
+    ]
+    router = AlertRouter(rules=rules, default_channel="webhook")
+    entry = _entry(failure_count=1, tags=["critical"])
+    assert router.route(entry) == "both"
